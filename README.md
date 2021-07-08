@@ -15,6 +15,9 @@
 https://user-images.githubusercontent.com/82233025/123548907-750c1580-d76f-11eb-98dc-69b21ae8d0e7.mp4
 
 
+https://user-images.githubusercontent.com/82233025/124905189-769ad080-dfee-11eb-8588-45920034cd85.mp4
+
+
 #### Usage
 
 - Most of the steps in the [todo-list](https://github.com/OguzhanAgca/todo-list) project apply here as well.

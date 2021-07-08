@@ -1,33 +1,36 @@
-const form = document.getElementById("form");
-const searchInput = document.getElementById("searchUser");
-const homeBtn = document.getElementById("home");
-const usersArea = document.getElementById("users");
-const favoritesBtn = document.getElementById("favorites");
-const favoritesBadge = document.getElementById("favoritesBadge");
+const form          =   document.getElementById("form");
+const searchInput   =   document.getElementById("searchUser");
+const homeBtn       =   document.getElementById("home");
+const usersArea     =   document.getElementById("users");
+const favoritesBtn  =   document.getElementById("favorites");
+const favoritesBadge=   document.getElementById("favoritesBadge");
+const lastUsersList =   document.getElementById("lastUsersList");
+const lastUsersDltBtn = document.getElementById("lastUsersDeleteBtn");
 
 eventListeners();
 
-const githubApi = new GithubAPI();
-const jsonRestApi = new RestAPI();
-const ui = new UI();
+const githubApi     =   new GithubAPI();
+const jsonRestApi   =   new RestAPI();
+const lStorage       =   new LStorage();
+const ui            =   new UI();
 
 function eventListeners(){
     form.addEventListener("submit",addUser);
     homeBtn.addEventListener("click",goHome);
     usersArea.addEventListener("click",addFavoritesForClick);
     favoritesBtn.addEventListener("click",getFavoriteUsers);
+    lastUsersList.addEventListener("click",deleteButtonsOfLS);
+    lastUsersDltBtn.addEventListener("click",deleteAllLastUsers);
 }
 
 function addUser(e){
     const searchInputValue = searchInput.value.trim();
 
     if(searchInputValue === ""){
-
         ui.messageCard("Please do not empty your username!","danger");
         searchInput.focus();
         searchInput.classList.add("is-invalid");
     }else{
-
         // Has the searched user been favorited before? If yes, user card will come with like
         let isHave,userIdFromJsonApi;
         jsonRestApi.getFavoriteUsers()
@@ -63,6 +66,7 @@ function addUser(e){
                         ui.messageCard(`You already searched for <b>${userDataFromGithub.login}</b>`,"danger");
                     }else{
                         ui.addUserToUIFromGithubApi(userDataFromGithub,reposDataFromGithub,isHave,userIdFromJsonApi);
+                        ui.addUserNameToLastUsers(userDataFromGithub);
                         ui.messageCard(`User <b>${userDataFromGithub.login}</b> found successfully!`,"success");
                         searchInput.classList.remove("is-invalid");
                     }
@@ -96,4 +100,20 @@ function getFavoriteUsers(){
     jsonRestApi.getFavoriteUsers().then(
         usersDataFromJsonApi=>favoritesBadge.innerHTML = usersDataFromJsonApi.length
     );
+    ui.addAllUsersToLastUsers();
 })();
+
+function deleteButtonsOfLS(e){
+    if(e.target.className == "fas fa-times"){
+        let liElementOfLastUsers = e.target.parentElement.parentElement;
+        let userName = e.target.parentElement.previousElementSibling.innerHTML;
+        ui.removeLastUserFromUI(liElementOfLastUsers);
+        lStorage.removeUserFromLocalStorage(userName);
+    }
+}
+
+function deleteAllLastUsers(){
+    ui.removeLastUserFromUI();
+    lStorage.removeUserFromLocalStorage();
+    ui.messageCard("You cleared recent searches!","success");
+}

@@ -39,3 +39,44 @@ class RestAPI {
         });
     }
 }
+
+class LStorage {
+    getUsersToLocalStorage(){
+        let lastUsers;
+        if(localStorage.getItem("lastUsers") == null){
+            lastUsers = [];
+        }else{
+            lastUsers= JSON.parse(localStorage.getItem("lastUsers"));
+        }
+        return lastUsers;
+    }
+    addUserToLocalStorage(userName){
+        let lastUsers = this.getUsersToLocalStorage();
+
+        let isHave = lastUsers.indexOf(userName);
+        if(isHave != -1){
+            lastUsers.splice(isHave,1);
+            lastUsers.unshift(userName);
+            localStorage.setItem("lastUsers",JSON.stringify(lastUsers));
+            return;
+        }
+        
+        lastUsers.unshift(userName);
+        localStorage.setItem("lastUsers",JSON.stringify(lastUsers));
+    }
+    removeUserFromLocalStorage(userName){
+        let lastUsers = this.getUsersToLocalStorage();
+        // Delete Selected Last User
+        if(userName){
+            lastUsers.filter((user,index)=>{
+                if(user === userName){
+                    lastUsers.splice(index,1);
+                    localStorage.setItem("lastUsers",JSON.stringify(lastUsers));
+                }
+            });
+            return;
+        }
+        // Delete All Last Users
+        localStorage.removeItem("lastUsers");
+    }
+}

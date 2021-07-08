@@ -5,6 +5,7 @@ class UI {
         this.usersArea = document.getElementById("users");
         this.homeText = document.getElementById("homeText");
         this.favoritesBadge = document.getElementById("favoritesBadge");
+        this.lastUsersList = document.getElementById("lastUsersList");
     }
     clearInput(){
         this.searchInput.value = "";
@@ -26,7 +27,9 @@ class UI {
             liElement += "<li class='list-group-item'>"+repo.name+"</li>"
         });
 
-        this.usersArea.innerHTML += `
+        this.usersArea.insertAdjacentHTML(
+            "afterbegin",
+            `
             <div class="row mt-4">
             <hr>
                 <div class="col-md-4  mb-3">
@@ -49,7 +52,7 @@ class UI {
                             <button type="button" class="btn btn-danger">Repos <span class="badge bg-secondary">${userData.public_repos}</span></button>
                         </span>
                         <span>
-                            <span class="d-none">${userIdFromJsonApi}</span>
+                            <span class="d-none">${userIdFromJsonApi || userData.login}</span>
                             <i class="fas fa-heart${isHave ? " text-danger":""}"></i>
                         </span>
                     </div>
@@ -58,7 +61,8 @@ class UI {
                 </div>
                 <hr>
             </div>
-        `;
+            `
+        );
     }
     addUserToUIFromGithubApi(userData,reposData,isHave,userIdFromJsonApi){
         this.createUserCard(userData,reposData,isHave,userIdFromJsonApi);
@@ -96,6 +100,48 @@ class UI {
                 "Have",
                 userDataFromJsonApi.id
             );
+        });
+    }
+    createLastUsersItem(username){
+        this.lastUsersList.insertAdjacentHTML(
+        // For last users sorting, little conditions
+        (typeof username === "object"?"afterbegin":"beforeend"),
+            `
+            <li class="list-group-item d-flex align-items-center justify-content-between">
+                <span>${typeof username === "object"?username.login:username}</span>
+                <span>
+                    <i class="fas fa-times"></i>
+                </span>
+            </li>
+            `
+        );
+    }
+    addUserNameToLastUsers(userDataFromGithub){
+        let lastUsers = lStorage.getUsersToLocalStorage();
+        let isHave = lastUsers.indexOf(userDataFromGithub.login);
+        // Update the sorting in the LastUsers area if there is a value to be added in Local Storage
+        if(isHave != -1){
+            document.querySelectorAll("#lastUsersList LI")[isHave].remove();
+            this.createLastUsersItem(userDataFromGithub);
+            lStorage.addUserToLocalStorage(userDataFromGithub.login);
+        }else{
+            this.createLastUsersItem(userDataFromGithub);
+            lStorage.addUserToLocalStorage(userDataFromGithub.login);
+        }
+    }
+    removeLastUserFromUI(liElementOfLastUsers){
+        if(liElementOfLastUsers){
+            liElementOfLastUsers.remove();
+            return;
+        }
+        while(this.lastUsersList.firstElementChild){
+            this.lastUsersList.firstElementChild.remove();
+        }
+    }
+    addAllUsersToLastUsers(){
+        let lastUsers = lStorage.getUsersToLocalStorage();
+        lastUsers.forEach(user=>{
+            this.createLastUsersItem(user);
         });
     }
 }

@@ -1,3 +1,15 @@
+::-webkit-scrollbar{
+    width: 10px;
+    background-color: #eaeaea;
+    border-left: 1px solid #f1f1f1;
+}
+::-webkit-scrollbar-thumb{
+    background-color: #a0a0a0;
+    border-radius: 15px;
+}
+::-webkit-scrollbar-thumb:hover{
+    background-color: #7d7d7d;
+}
 #homeText {
     font-size: 8vw;
     font-weight: bold;
@@ -13,4 +25,26 @@
 .fa-heart:hover:not(#btnHeart) {
     cursor: pointer;
     color: red;
+}
+#comingSoon{
+    font-size: 4vw;
+    font-weight: bold;
+    color: rgb(206, 206, 206);
+    text-align: center;
+    user-select: none;
+    margin: 5vw 0 5vw 0;
+}
+#lastUsersList {
+    min-height: 10vh;
+}
+.fa-times {
+    border: 1px solid #dc3545;
+    cursor: pointer;
+    color: #dc3545;
+    border-radius: 4px;
+    padding: 0.4rem 0.47rem;
+}
+.fa-times:hover {
+    background-color: #dc3545;
+    color: #fff;
 }
